@@ -6,6 +6,7 @@ import {
   getCategories,
   getTransactions,
 } from "../api/finance";
+import { getUser } from "../api/auth";
 
 const Dashboard = () => {
   const [type, setType] = useState<"expense" | "income">("expense");
@@ -16,15 +17,39 @@ const Dashboard = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [transactions, setTransactions] = useState<any[]>([]);
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [balance, setBalance] = useState(0);
+
+  const fetchUser = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const response = await getUser(token);
+      setUserEmail(response.data.data.email);
+    } catch (error) {
+      //
+    }
+  };
 
   const fetchCategories = async () => {
-    const response = await getCategories();
-    setCategories(response.data);
+    try {
+      const response = await getCategories();
+      setCategories(response.data);
+    } catch (error) {
+      //
+    }
   };
 
   const fetchTransactions = async () => {
-    const response = await getTransactions();
-    setTransactions(response.data.data);
+    try {
+      const response = await getTransactions();
+      const transactionsArray = Object.values(response.data);
+      setTransactions(transactionsArray);
+    } catch (error) {
+      //
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,7 +59,7 @@ const Dashboard = () => {
     await createTransaction({
       amount: parseFloat(amount),
       type,
-      category_id: selectedCategory,
+      category_id: Number(selectedCategory),
       note,
       date,
     });
@@ -52,22 +77,47 @@ const Dashboard = () => {
 
     await createCategory({ name: newCategoryName.trim() });
     setNewCategoryName("");
-    fetchCategories(); // Обновляем список категорий
+    fetchCategories();
   };
 
   useEffect(() => {
+    fetchUser();
     fetchCategories();
     fetchTransactions();
   }, []);
 
+  useEffect(() => {
+    let income = 0;
+    let expense = 0;
+
+    transactions.forEach((tx) => {
+      const type = (tx.type || "").toString().trim().toLowerCase();
+      const value = parseFloat(tx.amount || "0");
+
+      if (type === "income") {
+        income += value;
+      } else if (type === "expense") {
+        expense += value;
+      }
+    });
+
+    setTotalIncome(income);
+    setTotalExpense(expense);
+    setBalance(income - expense);
+  }, [transactions]);
+
   return (
     <div className="page-wrapper">
-      <Header userEmail={null} />
+      <Header userEmail={userEmail} />
 
       <div className="dashboard-container">
         <aside className="dashboard-sidebar">
           <h2>Мой бюджет</h2>
-          <p>Бюджет пока не настроен.</p>
+          <p>
+            💰 <strong>Баланс:</strong> {balance} ₽<br />
+            🟢 Доходы: {totalIncome} ₽<br />
+            🔴 Расходы: {totalExpense} ₽
+          </p>
 
           <h3>Добавить категорию</h3>
           <form
@@ -146,7 +196,7 @@ const Dashboard = () => {
 
         <section className="dashboard-transactions">
           <h2>Последние операции</h2>
-          {transactions.length > 0 ? (
+          {transactions?.length > 0 ? (
             <ul className="transactions-list">
               {transactions.map((tx) => (
                 <li
@@ -159,7 +209,7 @@ const Dashboard = () => {
                   </div>
                   <div style={{ fontSize: "14px", color: "#666" }}>
                     {tx.note && <span>{tx.note} | </span>}
-                    {tx.date}
+                    {tx.date?.slice(0, 10)}
                   </div>
                 </li>
               ))}

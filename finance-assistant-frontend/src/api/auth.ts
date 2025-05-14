@@ -16,6 +16,14 @@ export const api = axios.create({
   baseURL: "http://localhost:8000/api", // базовый путь
 });
 
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const logout = () => api.post("/logout");
 
 export const login = (data: LoginData) => {
@@ -29,7 +37,7 @@ export const register = (data: RegisterData) => {
 export const getUser = (token: string) => {
   return api.get("/user", {
     headers: {
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   });
 };

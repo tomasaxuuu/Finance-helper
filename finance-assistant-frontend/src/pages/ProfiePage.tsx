@@ -42,7 +42,7 @@ const Profile = () => {
 
   return (
     <>
-      <Header />
+      <Header userEmail={null} />
       <div className="profile-page">
         <h2 className="profile-title">Профиль</h2>
         {error && <p className="profile-error">{error}</p>}

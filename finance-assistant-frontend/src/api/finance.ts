@@ -10,7 +10,6 @@ export const getTransactions = () => {
   return api.get('/transactions');
 };
 
-// Создать транзакцию
 export const createTransaction = (data: {
   amount: number;
   type: string;
@@ -20,6 +19,7 @@ export const createTransaction = (data: {
 }) => {
   return api.post('/transactions', data);
 };
+
 
 // Создать категорию
 export const createCategory = (data: { name: string }) => {

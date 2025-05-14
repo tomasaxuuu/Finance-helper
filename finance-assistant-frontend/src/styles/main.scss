@@ -618,3 +618,37 @@ form button:hover {
   border-color: #ff4d4d;
   box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.3);
 }
+@media (max-width: 768px) {
+  .site-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .profile-actions {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .dashboard-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dashboard-sidebar,
+  .dashboard-main,
+  .dashboard-transactions {
+    width: 90%;
+    max-width: 100%;
+  }
+}
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: #fff1f1;
+  border-bottom: 1px solid #eee;
+}

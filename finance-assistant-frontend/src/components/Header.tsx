@@ -10,12 +10,16 @@ const Header = ({ userEmail }: HeaderProps) => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userEmail");
-    navigate("/"); // возвращаем на главную
-    window.location.reload(); // принудительно обновляем страницу чтобы сразу убрать состояние
+    navigate("/");
+    window.location.reload();
   };
 
   const handleProfileClick = () => {
     navigate("/profile");
+  };
+
+  const handleAdvisorClick = () => {
+    navigate("/pages/Advisor");
   };
 
   return (
@@ -25,20 +29,34 @@ const Header = ({ userEmail }: HeaderProps) => {
         <span className="logo-highlight">Помощник</span>
       </div>
 
-      {userEmail && (
-        <div className="profile-actions">
+      <div
+        className="header-buttons"
+        style={{ display: "flex", gap: "16px", alignItems: "center" }}
+      >
+        {userEmail && (
           <div
-            className="profile-button"
-            onClick={handleProfileClick}
-            style={{ cursor: "pointer" }}
+            className="profile-actions"
+            style={{ display: "flex", gap: "12px", alignItems: "center" }}
           >
-            📧 {userEmail}
+            <div
+              className="profile-button"
+              onClick={handleProfileClick}
+              style={{ cursor: "pointer" }}
+            >
+              📧 {userEmail}
+            </div>
+            <button
+              onClick={handleAdvisorClick}
+              className="add-category-button1"
+            >
+              🧠 AI-Советник
+            </button>
+            <button className="logout-button" onClick={handleLogout}>
+              Выйти
+            </button>
           </div>
-          <button className="logout-button" onClick={handleLogout}>
-            Выйти
-          </button>
-        </div>
-      )}
+        )}
+      </div>
     </header>
   );
 };

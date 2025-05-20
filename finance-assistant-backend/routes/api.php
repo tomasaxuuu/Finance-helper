@@ -6,11 +6,12 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ExportController;
 use App\Http\Middleware\CorsMiddleware;
-
+use App\Http\Controllers\AdviceController;
 // Открытые маршруты (регистрация и логин) с CORS
 Route::middleware([CorsMiddleware::class])->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/advice', [AdviceController::class, 'generate']);
 });
 
 // Защищенные маршруты (только для авторизованных пользователей)
@@ -28,11 +29,14 @@ Route::middleware(['auth:sanctum', CorsMiddleware::class])->group(function () {
     // Работа с категориями
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::post('/categories', [CategoryController::class, 'store']);
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
 
     // Аналитика
     Route::get('/analytics', [TransactionController::class, 'analytics']);
     Route::get('/analytics/monthly', [TransactionController::class, 'monthlyAnalytics']);
-    
+
     // Экспорт PDF
-    Route::get('/transactions/export-pdf', [ExportController::class, 'exportPdf']);
+    Route::get('/transactions/export/pdf', [ExportController::class, 'exportPdf']);
+    // routes/api.php
+
 });

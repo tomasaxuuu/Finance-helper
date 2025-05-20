@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TransactionController extends Controller
 {
@@ -128,5 +129,19 @@ class TransactionController extends Controller
         $transaction->delete();
 
         return response()->json(['message' => 'Transaction deleted successfully']);
+    }
+
+
+    public function exportPdf(Request $request)
+    {
+        $transactions = $request->user()
+            ->transactions()
+            ->with('category')
+            ->get();
+
+        $pdf = Pdf::loadView('pdf', ['transactions' => $transactions])
+            ->setOptions(['defaultFont' => 'dejavusans']);
+
+        return $pdf->download('transactions.pdf');
     }
 }

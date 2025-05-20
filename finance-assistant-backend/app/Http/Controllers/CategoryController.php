@@ -22,4 +22,11 @@ class CategoryController extends Controller
 
         return response()->json($category, 201);
     }
+    public function destroy(Category $category)
+    {
+
+        $category->delete();
+
+        return response()->json(['message' => 'Категория удалена']);
+    }
 }

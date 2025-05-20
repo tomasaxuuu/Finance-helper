@@ -630,8 +630,13 @@ form button:hover {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
-
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   .dashboard-container {
     flex-direction: column;
     align-items: center;
@@ -651,4 +656,160 @@ form button:hover {
   padding: 15px 30px;
   background: #fff1f1;
   border-bottom: 1px solid #eee;
+}
+.dashboard-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.dashboard-sidebar,
+.dashboard-main,
+.dashboard-transactions {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  flex: 1 1 300px;
+  max-width: 400px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dashboard-sidebar,
+  .dashboard-main,
+  .dashboard-transactions {
+    width: 90%;
+    max-width: none;
+  }
+}
+.add-category-button {
+  margin-bottom: 20px;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5); // полупрозрачный чёрный фон
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-window {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 850px;
+  width: 90%;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+}
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #333;
+  transition: transform 0.2s;
+  z-index: 10;
+}
+
+.modal-close:hover {
+  transform: scale(1.2);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-window {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 850px;
+  width: 95%;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+.show-chart-button {
+  width: 100%;
+  font-weight: bold;
+}
+.form-date {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+.form-date {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: #fff;
+  color: #333;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.form-date:focus {
+  border-color: #ff5757;
+  box-shadow: 0 0 0 2px rgba(255, 87, 87, 0.2);
+}
+.color-empty {
+  fill: #eeeeee;
+}
+.color-github-1 {
+  fill: #c6e48b;
+}
+.color-github-2 {
+  fill: #7bc96f;
+}
+.color-github-3 {
+  fill: #239a3b;
+}
+.color-github-4 {
+  fill: #196127;
+}
+.piggy-animate {
+  animation: piggyBounce 0.4s ease;
+}
+
+@keyframes piggyBounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

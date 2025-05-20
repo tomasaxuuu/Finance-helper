@@ -6,7 +6,7 @@ export const getCategories = () => {
 };
 
 // Получить транзакции
-export const getTransactions = () => {
+export const getTransactions = (token: string) => {
   return api.get('/transactions');
 };
 
@@ -20,8 +20,29 @@ export const createTransaction = (data: {
   return api.post('/transactions', data);
 };
 
+export const updateTransaction = (id: number, data: {
+  amount: number;
+  type: string;
+  category_id: number;
+  note: string;
+  date: string;
+}) => {
+  return api.put(`/transactions/${id}`, data);
+};
 
 // Создать категорию
 export const createCategory = (data: { name: string }) => {
   return api.post('/categories', data);
+};
+// Удалить транзакцию
+export const deleteTransaction = (id: number) => {
+  return api.delete(`/transactions/${id}`);
+};
+export const deleteCategory = (id: number | string) => {
+  return api.delete(`/categories/${id}`);
+};
+export const exportTransactionsPdf = () => {
+  return api.get(`/transactions/export/pdf?ts=${Date.now()}`, {
+    responseType: "blob",
+  });
 };

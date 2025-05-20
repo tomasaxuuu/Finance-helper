@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/DashboardPage";
 import PrivateRoute from "./components/PrivateRoute";
 import "./styles/main.scss";
+import Advisor from "./pages/Advisor";
 
 function App() {
   return (
@@ -23,6 +24,14 @@ function App() {
           element={
             <PrivateRoute>
               <DashboardPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/pages/Advisor"
+          element={
+            <PrivateRoute>
+              <Advisor />
             </PrivateRoute>
           }
         />

@@ -1,0 +1,15 @@
+{
+  "transactions": [
+    {
+      "id": 15,
+      "user_id": 1,
+      "type": "expense",
+      "amount": 100000.0,
+      "note": "первое",
+      "date": "2025-05-13 00:00:00",
+      "created_at": "2025-05-13 23:56:02",
+      "updated_at": "2025-05-13 23:56:02",
+      "category_id": 4
+    }
+  ]
+}

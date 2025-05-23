@@ -140,7 +140,16 @@ class TransactionController extends Controller
             ->get();
 
         $pdf = Pdf::loadView('pdf', ['transactions' => $transactions])
-            ->setOptions(['defaultFont' => 'dejavusans']);
+            ->setOption([
+                'font_cache' => storage_path('fonts/'),
+                'default_font' => 'dejavu sans',
+                'isRemoteEnabled' => true,
+                'isHtml5ParserEnabled' => true,
+                'isPhpEnabled' => true,
+                'dpi' => 300,
+                'defaultPaperSize' => 'A4',
+                'font_height_ratio' => 0.9
+            ]);
 
         return $pdf->download('transactions.pdf');
     }

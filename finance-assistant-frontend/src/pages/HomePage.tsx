@@ -92,7 +92,6 @@ const HomePage = () => {
   return (
     <div className="page-wrapper">
       <Header userEmail={userEmail} /> {/* <<< передаем userEmail сюда */}
-
       <div className="home-container">
         {/* ... остальной код без изменений */}
         <div className="home-left">
@@ -126,36 +125,37 @@ const HomePage = () => {
           </ul>
         </div>
 
-        <div className="home-right">
-          <div className="auth-card">
-            <div className="auth-header">
-              <button
-                type="button"
-                className={type === "login" ? "active" : ""}
-                onClick={() => setType("login")}
-              >
-                Вход
-              </button>
-              <button
-                type="button"
-                className={type === "register" ? "active" : ""}
-                onClick={() => setType("register")}
-              >
-                Регистрация
-              </button>
+        {!userEmail && (
+          <div className="home-right">
+            <div className="auth-card">
+              <div className="auth-header">
+                <button
+                  type="button"
+                  className={type === "login" ? "active" : ""}
+                  onClick={() => setType("login")}
+                >
+                  Вход
+                </button>
+                <button
+                  type="button"
+                  className={type === "register" ? "active" : ""}
+                  onClick={() => setType("register")}
+                >
+                  Регистрация
+                </button>
+              </div>
+
+              <AuthForm
+                type={type}
+                form={form}
+                onChange={handleChange}
+                onSubmit={handleSubmit}
+                error={error}
+              />
             </div>
-
-            <AuthForm
-              type={type}
-              form={form}
-              onChange={handleChange}
-              onSubmit={handleSubmit}
-              error={error}
-            />
           </div>
-        </div>
+        )}
       </div>
-
       <footer className="site-footer">
         <div className="footer-content">
           <div className="support-info">

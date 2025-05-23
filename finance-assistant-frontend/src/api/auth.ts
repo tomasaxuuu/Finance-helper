@@ -11,7 +11,12 @@ interface RegisterData {
   password: string;
   password_confirmation: string;
 }
-
+interface UpdateProfileData {
+  name: string;
+  email: string;
+  password?: string;
+  password_confirmation?: string;
+}
 export const api = axios.create({
   baseURL: "http://localhost:8000/api", // базовый путь
 });
@@ -40,4 +45,9 @@ export const getUser = (token: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
+};
+
+
+export const updateProfile = (data: UpdateProfileData) => {
+  return api.put("/user", data);
 };

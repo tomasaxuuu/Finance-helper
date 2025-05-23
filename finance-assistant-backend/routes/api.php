@@ -18,6 +18,7 @@ Route::middleware([CorsMiddleware::class])->group(function () {
 Route::middleware(['auth:sanctum', CorsMiddleware::class])->group(function () {
     // Работа с пользователем
     Route::get('/user', [AuthController::class, 'user']);
+    Route::put('/user', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Работа с транзакциями
@@ -36,7 +37,7 @@ Route::middleware(['auth:sanctum', CorsMiddleware::class])->group(function () {
     Route::get('/analytics/monthly', [TransactionController::class, 'monthlyAnalytics']);
 
     // Экспорт PDF
-    Route::get('/transactions/export/pdf', [ExportController::class, 'exportPdf']);
+    Route::get('/transactions/export/pdf', [TransactionController::class, 'exportPdf']);
     // routes/api.php
 
 });

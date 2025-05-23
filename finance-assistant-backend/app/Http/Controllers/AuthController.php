@@ -32,6 +32,37 @@ class AuthController extends Controller
             'token_type' => 'Bearer'
         ], 200);
     }
+    public function update(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+
+        $user->save();
+        if (!empty($validated['password'])) {
+            $user->tokens()->delete();
+            return response()->json([
+                'message' => 'Пароль обновлён, требуется повторный вход.',
+                'force_logout' => true,
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Профиль успешно обновлён',
+            'data' => $user
+        ]);
+    }
 
     public function login(Request $request)
     {

@@ -21,10 +21,12 @@ const Header = ({ userEmail }: HeaderProps) => {
   const handleAdvisorClick = () => {
     navigate("/pages/Advisor");
   };
-
+  const handleGoHome = () => {
+    navigate("/");
+  };
   return (
     <header className="site-header">
-      <div className="logo">
+      <div className="logo" style={{cursor: "pointer"}} onClick={handleGoHome}>
         <span className="logo-text">Финансовый</span>
         <span className="logo-highlight">Помощник</span>
       </div>
@@ -50,6 +52,9 @@ const Header = ({ userEmail }: HeaderProps) => {
               className="add-category-button1"
             >
               🧠 AI-Советник
+            </button>
+            <button className="logout-button" onClick={handleGoHome}>
+              Главная
             </button>
             <button className="logout-button" onClick={handleLogout}>
               Выйти

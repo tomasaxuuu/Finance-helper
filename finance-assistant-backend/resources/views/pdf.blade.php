@@ -5,43 +5,52 @@
     <meta charset="UTF-8">
     <title>321</title>
     <style>
-        body {
-            font-family: DejaVu Sans, sans-serif;
-        }
-
         @font-face {
-            font-family: "DejaVu Sans";
+            font-family: 'DejaVu Sans';
             font-style: normal;
-            font-weight: 400;
-            src: url("/fonts/dejavu-sans/DejaVuSans.ttf");
-            /* IE9 Compat Modes */
-            src:
-                local("DejaVu Sans"),
-                local("DejaVu Sans"),
-                url("/fonts/dejavu-sans/DejaVuSans.ttf") format("truetype");
+            font-weight: normal;
+            src: url({{ storage_path('fonts/DejaVuSans.ttf')
+        }
+        }) format('truetype');
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
+        body,
+        div,
+        p,
+        strong,
+        em,
+        span,
+        li {
+            font-family: 'DejaVu Sans', Arial, sans-serif !important;
         }
     </style>
 </head>
 
 <body>
-    <h1>✅ Проверка: всё работает</h1>
+    {!! htmlspecialchars_decode(html_entity_decode($content, ENT_QUOTES, 'UTF-8'), ENT_QUOTES) !!}
+    <h2>Финансовые транзакции</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Тип</th>
+                <th>Категория</th>
+                <th>Сумма</th>
+                <th>Заметка</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($transactions as $tx)
+            <tr>
+                <td>{{ $tx->date }}</td>
+                <td>{{ $tx->type }}</td>
+                <td>{{ $tx->category->name ?? 'Без категории' }}</td>
+                <td>{{ $tx->amount }} ₽</td>
+                <td>{{ $tx->note }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
 </body>
 
 </html>

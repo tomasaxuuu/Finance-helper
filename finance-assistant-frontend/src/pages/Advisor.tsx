@@ -1,97 +1,93 @@
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
-import { getTransactions } from "../api/finance";
+import { getTransactions, getCategories } from "../api/finance";
+import { getUser } from "../api/auth";
 
 const Advisor = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [income, setIncome] = useState(0);
+  const [expense, setExpense] = useState(0);
+  const [balance, setBalance] = useState(0);
+  const [piggyBank, setPiggyBank] = useState(0);
   const [advice, setAdvice] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-
-  // Получение транзакций пользователя
-  const fetchTransactions = async () => {
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const fetchUser = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("Пользователь не авторизован.");
-
-      const response = await getTransactions(token);
-      setTransactions(Object.values(response.data));
-    } catch (error) {
-      console.error("Ошибка при загрузке транзакций:", error);
-    }
+      if (!token) return;
+      const response = await getUser(token);
+      setUserEmail(response.data.data.email);
+    } catch (error) {}
   };
-
   useEffect(() => {
-    fetchTransactions();
+    fetchUser();
+    const fetchAll = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const resTx = await getTransactions(token);
+        const txData = Object.values(resTx.data);
+        setTransactions(txData);
+
+        let totalIncome = 0;
+        let totalExpense = 0;
+        let piggy = 0;
+
+        txData.forEach((tx: any) => {
+          const type = (tx.type || "").toLowerCase();
+          const value = parseFloat(tx.amount || "0");
+          const catName = tx.category?.name?.toLowerCase();
+
+          if (type === "income") totalIncome += value;
+          else if (type === "expense") totalExpense += value;
+
+          if (catName === "копилка") {
+            if (type === "expense") piggy += value;
+            if (type === "income") piggy -= value;
+          }
+        });
+
+        setIncome(totalIncome);
+        setExpense(totalExpense);
+        setBalance(totalIncome - totalExpense);
+        setPiggyBank(piggy);
+
+        const resCat = await getCategories();
+        setCategories(resCat.data.map((c: any) => c.name));
+      } catch (error) {
+        console.error("Ошибка при загрузке данных:", error);
+      }
+    };
+
+    fetchAll();
   }, []);
 
-  // Генерация советов на основе транзакций
-  const generateAdvice = async () => {
+  const requestAdvice = async (type: string, data: any) => {
     setLoading(true);
+    setAdvice([`📡 Запрос совета по теме: ${type}`]);
+
     try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("Отсутствует токен авторизации");
-
-      const cleanedTransactions = transactions
-        .slice(0, 30)
-        .map(({ id, type, amount, note, date, category_id }) => ({
-          id,
-          type,
-          amount,
-          note,
-          date,
-          category_id,
-        }));
-
       const res = await fetch("http://127.0.0.1:8000/api/advice", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          transactions: cleanedTransactions,
-        }),
+        body: JSON.stringify({ type, data }),
       });
 
-      if (!res.ok) {
-        const isJson = res.headers
-          .get("content-type")
-          ?.includes("application/json");
-
-        if (isJson) {
-          const err = await res.json();
-          throw new Error(
-            err.message || `Ошибка ${res.status}: ${res.statusText}`
-          );
-        } else {
-          const html = await res.text();
-          throw new Error("Получен HTML вместо JSON: " + html.slice(0, 100));
-        }
-      }
-
-      const data = await res.json();
-      console.log("📦 Ответ от сервера:", data); // ← добавь эту строку
-      if (!data.choices || !data.choices[0]?.message?.content) {
-        setAdvice([
-          "🤖 GPT не дал ответ. Возможно, ошибка, превышен лимит токенов или недостаточно данных.",
-        ]);
-        return;
-      }
-
-      const gptText = data.choices[0].message.content;
-
+      const result = await res.json();
+      const gptText =
+        result.choices?.[0]?.message?.content ?? "❌ Нет ответа от AI";
       const lines = gptText
         .split("\n")
-        .map((line: string) => line.trim())
-        .filter((line: string) => line);
-
+        .map((l: string) => l.trim())
+        .filter(Boolean);
       setAdvice(lines);
     } catch (error: any) {
-      console.error("Ошибка сети или запроса:", error);
-      setAdvice([
-        "❌ Ошибка при обращении к AI: " +
-          (error.message || "Неизвестная ошибка."),
-      ]);
+      setAdvice([`❌ Ошибка: ${error.message}`]);
     } finally {
       setLoading(false);
     }
@@ -99,37 +95,77 @@ const Advisor = () => {
 
   return (
     <div className="page-wrapper">
-      <Header userEmail={null} />
+      <Header userEmail={userEmail} />
 
       <div
         className="advisor-container"
         style={{ maxWidth: "600px", margin: "0 auto", padding: "20px" }}
       >
         <h2>🧠 AI-Финансовый Советник</h2>
-        <p>
-          Нажмите кнопку, чтобы получить персональные советы на основе ваших
-          транзакций.
-        </p>
+        <p>Выберите блок и получите персональный совет на основе данных.</p>
 
-        <button
-          onClick={generateAdvice}
-          disabled={loading}
-          className="add-category-button"
-          style={{ marginTop: "15px" }}
-        >
-          {loading ? "Анализ..." : "Получить советы"}
-        </button>
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          <button
+            onClick={() =>
+              requestAdvice("budget", { balance, income, expense })
+            }
+          >
+            💸 Совет по бюджету
+          </button>
+          <button
+            onClick={() =>
+              requestAdvice("operations", { last: transactions.slice(0, 5) })
+            }
+          >
+            🧾 Совет по последним операциям
+          </button>
+          <button
+            onClick={() => requestAdvice("piggybank", { piggybank: piggyBank })}
+          >
+            🐷 Совет по копилке
+          </button>
+          <button
+            onClick={() =>
+              requestAdvice("activity", {
+                dates: transactions.map((t) => t.date),
+              })
+            }
+          >
+            📅 Совет по активности
+          </button>
+          <button onClick={() => requestAdvice("categories", { categories })}>
+            🗂 Совет по категориям
+          </button>
+          <button
+            onClick={() => requestAdvice("summary", { all: transactions })}
+          >
+            📊 Общий анализ
+          </button>
+        </div>
 
         {advice.length > 0 && (
           <div style={{ marginTop: "25px" }}>
             <h3>📋 Рекомендации:</h3>
-            <ul>
+            <div
+              style={{
+                maxHeight: "300px",
+                overflowY: "auto",
+                border: "1px solid #ccc",
+                padding: "16px",
+                borderRadius: "8px",
+                backgroundColor: "#f0f7ff", // 👈 выделенный фон
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.05)",
+                fontSize: "14px",
+                lineHeight: "1.6",
+                color: "#0a2c47", // 👈 контрастный текст
+              }}
+            >
               {advice.map((item, index) => (
-                <li key={index} style={{ marginBottom: "10px" }}>
+                <p key={index} style={{ marginBottom: "12px" }}>
                   {item}
-                </li>
+                </p>
               ))}
-            </ul>
+            </div>
           </div>
         )}
       </div>

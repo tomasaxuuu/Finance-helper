@@ -31,6 +31,7 @@ html {
 .profile-actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   flex-wrap: wrap; /* чтобы кнопка "Выйти" переносилась */
   max-width: 100%;
@@ -76,8 +77,6 @@ html {
   }
 
   .profile-actions {
-    flex-direction: column;
-    align-items: flex-start;
     width: 100%;
   }
 
@@ -119,6 +118,7 @@ html {
 .profile-buttons {
   display: flex;
   gap: 10px;
+  flex-direction: column;
   margin-top: 20px;
 }
 
@@ -629,7 +629,7 @@ form button:hover {
     margin-top: 10px;
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
   }
   .pagination {
@@ -812,4 +812,12 @@ form button:hover {
   100% {
     transform: scale(1);
   }
+}
+.edit_profile {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background-color: #fff;
+  color: #333;
 }

@@ -16,9 +16,12 @@
     "react-calendar-heatmap": "^1.10.0",
     "react-datepicker": "^8.3.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.56.4",
     "react-router-dom": "^7.5.2",
     "react-select": "^5.10.1",
-    "recharts": "^2.15.3"
+    "react-tsparticles": "^2.12.2",
+    "recharts": "^2.15.3",
+    "tsparticles": "^3.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

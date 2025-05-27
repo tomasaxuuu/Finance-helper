@@ -91,35 +91,60 @@ const HomePage = () => {
 
   return (
     <div className="page-wrapper">
-      <Header userEmail={userEmail} /> {/* <<< передаем userEmail сюда */}
+      <Header userEmail={userEmail} />
       <div className="home-container">
-        {/* ... остальной код без изменений */}
+        <div className="background-animation">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
         <div className="home-left">
           <h1>Ваш финансовый помощник</h1>
           <p className="subtext">Получите больше от своих финансов</p>
           <ul className="benefits">
             <li>
               <div className="benefit-content">
-                <strong>Мечтайте и исполняйте</strong>
-                <div>Начните двигаться к своим финансовым целям уже сейчас</div>
+                <strong>Полный контроль над бюджетом</strong>
+                <div>
+                  Отслеживайте баланс, доходы и расходы в реальном времени
+                </div>
               </div>
             </li>
             <li>
               <div className="benefit-content">
-                <strong>Управляйте сбережениями эффективно</strong>
-                <div>С помощью рекомендаций финансового консультанта</div>
+                <strong>Добавление операций в один клик</strong>
+                <div>Быстро фиксируйте расходы и доходы по категориям</div>
               </div>
             </li>
             <li>
               <div className="benefit-content">
-                <strong>Возвращайте налоговый вычет онлайн</strong>
-                <div>Без заполнения «миллиона бумажек» и очередей</div>
+                <strong>Умная копилка</strong>
+                <div>Копите и снимайте средства — как в реальной жизни</div>
               </div>
             </li>
             <li>
               <div className="benefit-content">
-                <strong>Изучайте новое</strong>
-                <div>Полезные советы в области финансов и управления ими</div>
+                <strong>Графики и аналитика</strong>
+                <div>
+                  Наглядные диаграммы по тратам, категориям и активности
+                </div>
+              </div>
+            </li>
+            <li>
+              <div className="benefit-content">
+                <strong>AI-советник</strong>
+                <div>
+                  Индивидуальные подсказки по оптимизации бюджета и привычек
+                </div>
+              </div>
+            </li>
+            <li>
+              <div className="benefit-content">
+                <strong>Экспорт в PDF</strong>
+                <div>Сохраняйте отчёты и делитесь ими в удобном формате</div>
               </div>
             </li>
           </ul>
@@ -134,14 +159,14 @@ const HomePage = () => {
                   className={type === "login" ? "active" : ""}
                   onClick={() => setType("login")}
                 >
-                  Вход
+                  Войти
                 </button>
                 <button
                   type="button"
                   className={type === "register" ? "active" : ""}
                   onClick={() => setType("register")}
                 >
-                  Регистрация
+                  Зарегистрироваться
                 </button>
               </div>
 
@@ -158,18 +183,12 @@ const HomePage = () => {
       </div>
       <footer className="site-footer">
         <div className="footer-content">
-          <div className="support-info">
-            При возникновении вопросов вы можете обратиться по телефону горячей
-            линии 8 (800) 100-12-10 (бесплатно для звонков по России)
-          </div>
           <div className="legal-info">
-            Услуги оказывает партнер ООО СК «Росгосстрах Жизнь» – компания ООО
-            «МДАУ ИНВЕСТИЦИЯ». Услуги предполагают составление персонального
-            финансового плана, оказание помощи в подготовке и заполнении
-            документов, которые дают право на получение налогового вычета. ООО
-            «МДАУ ИНВЕСТИЦИЯ» и ООО СК «Росгосстрах Жизнь» не гарантируют
-            получение налогового вычета.
+            Данный проект разработан в рамках дипломной работы. Все функции
+            реализованы в учебных целях. Данные не передаются третьим лицам и
+            используются только локально.
           </div>
+          <p>© 2025 tomasaxuuu — Финансовый помощник. Все права защищены.</p>
         </div>
       </footer>
     </div>

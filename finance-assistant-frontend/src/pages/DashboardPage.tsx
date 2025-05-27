@@ -22,6 +22,7 @@ import MonthlyChart from "../components/MontlyCharts";
 const Dashboard = () => {
   const [type, setType] = useState<"expense" | "income">("expense");
   const [amount, setAmount] = useState("");
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [note, setNote] = useState("");
   const [date, setDate] = useState("");
   const [categories, setCategories] = useState<any[]>([]);
@@ -44,6 +45,31 @@ const Dashboard = () => {
   const [piggyBankTotal, setPiggyBankTotal] = useState(0);
   const [piggyAnimated, setPiggyAnimated] = useState(false);
   const [piggyWithdrawAmount, setPiggyWithdrawAmount] = useState("");
+
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const token = localStorage.getItem("token");
+      await fetch("http://localhost:8000/api/import-pdf", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      alert("Импорт успешно завершён");
+      fetchTransactions(); // обновим список
+    } catch (error) {
+      console.error("Ошибка при импорте PDF", error);
+      alert("Произошла ошибка при импорте");
+    }
+  };
 
   const fetchUser = async () => {
     try {
@@ -248,6 +274,20 @@ const Dashboard = () => {
 
       <div className="dashboard-container">
         <aside className="dashboard-sidebar">
+          <label
+            className="add-category-button show-chart-button"
+            style={{ cursor: "pointer" }}
+          >
+            <input
+              type="file"
+              accept=".pdf"
+              style={{ display: "none" }}
+              onChange={handlePdfUpload}
+            />
+            <span>📥</span>
+            <span>Импорт PDF-выписки</span>
+          </label>
+
           <h2>Мой бюджет</h2>
           <p>
             <strong>Баланс:</strong> {Math.round(balance)} ₽<br />

@@ -32,7 +32,15 @@ const AuthForm: React.FC<AuthFormProps> = ({
             onChange={onChange}
           />
         )}
-        
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={onChange}
+        />
+
         <input
           type="password"
           name="password"
@@ -40,7 +48,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
           value={form.password}
           onChange={onChange}
         />
-        
+
         {type === "register" && (
           <input
             type="password"
@@ -51,16 +59,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
           />
         )}
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={onChange}
-        />
-        
         {error && <p className="error-message">{error}</p>}
-        
+
         <button type="submit">
           {type === "login" ? "Войти" : "Зарегистрироваться"}
         </button>

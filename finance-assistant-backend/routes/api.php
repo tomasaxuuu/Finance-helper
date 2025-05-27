@@ -7,6 +7,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ExportController;
 use App\Http\Middleware\CorsMiddleware;
 use App\Http\Controllers\AdviceController;
+use App\Http\Controllers\TransactionImportController;
+
 // Открытые маршруты (регистрация и логин) с CORS
 Route::middleware([CorsMiddleware::class])->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -39,5 +41,5 @@ Route::middleware(['auth:sanctum', CorsMiddleware::class])->group(function () {
     // Экспорт PDF
     Route::get('/transactions/export/pdf', [TransactionController::class, 'exportPdf']);
     // routes/api.php
-
+    Route::post('/import-pdf', [TransactionImportController::class, 'import']);
 });

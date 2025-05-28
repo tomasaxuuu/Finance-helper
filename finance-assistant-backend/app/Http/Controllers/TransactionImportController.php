@@ -67,7 +67,11 @@ class TransactionImportController extends Controller
                     ? $incomeCategories[array_rand($incomeCategories)]
                     : $expenseCategories[array_rand($expenseCategories)];
 
-                $category = Category::firstOrCreate(['name' => $categoryText]);
+                $category = Category::firstOrCreate(
+                    ['name' => $categoryText, 'user_id' => Auth::id()],
+                    ['name' => $categoryText, 'user_id' => Auth::id()]
+                );
+
 
                 // 🧠 логичное описание
                 $note = 'Без описания';

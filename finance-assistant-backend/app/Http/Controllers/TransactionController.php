@@ -18,7 +18,7 @@ class TransactionController extends Controller
     {
         $query = $request->user()
             ->transactions()
-            ->with('category') // Загружаем категорию
+            ->with('category')
             ->orderBy('date', 'desc');
 
         if ($request->has('search')) {
@@ -41,7 +41,6 @@ class TransactionController extends Controller
             $query->whereDate('date', '<=', $request->to);
         }
 
-        // Возвращаем массив транзакций
         return response()->json($query->get());
     }
 
@@ -52,15 +51,25 @@ class TransactionController extends Controller
             'amount' => 'required|numeric|min:0',
             'note' => 'nullable|string|max:255',
             'date' => 'nullable|date',
-            'category_id' => 'nullable|exists:categories,id',
+            'category_id' => 'nullable|integer',
         ]);
+
+        // Проверяем, принадлежит ли категория текущему пользователю
+        if (isset($validated['category_id'])) {
+            $categoryExists = $request->user()
+                ->categories()
+                ->where('id', $validated['category_id'])
+                ->exists();
+
+            if (!$categoryExists) {
+                return response()->json(['error' => 'Категория не найдена'], 422);
+            }
+        }
 
         $transaction = $request->user()->transactions()->create($validated);
 
         return response()->json($transaction->load('category'), 201);
     }
-
-
 
     public function update(Request $request, Transaction $transaction)
     {
@@ -71,12 +80,23 @@ class TransactionController extends Controller
             'amount' => 'required|numeric|min:0',
             'note' => 'nullable|string|max:255',
             'date' => 'nullable|date',
-            'category_id' => 'nullable|exists:categories,id',
+            'category_id' => 'nullable|integer',
         ]);
+
+        if (isset($validated['category_id'])) {
+            $categoryExists = $request->user()
+                ->categories()
+                ->where('id', $validated['category_id'])
+                ->exists();
+
+            if (!$categoryExists) {
+                return response()->json(['error' => 'Категория не найдена'], 422);
+            }
+        }
 
         $transaction->update($validated);
 
-        return response()->json($transaction->load('category')); // Вернём с категорией
+        return response()->json($transaction->load('category'));
     }
 
     public function analytics(Request $request)
@@ -86,6 +106,7 @@ class TransactionController extends Controller
         if ($request->has('from')) {
             $query->whereDate('date', '>=', $request->from);
         }
+
         if ($request->has('to')) {
             $query->whereDate('date', '<=', $request->to);
         }
@@ -130,7 +151,6 @@ class TransactionController extends Controller
 
         return response()->json(['message' => 'Transaction deleted successfully']);
     }
-
 
     public function exportPdf(Request $request)
     {

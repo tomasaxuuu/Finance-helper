@@ -18,6 +18,7 @@ import {
 import ChartModal from "../components/ChartModal";
 import { getUser } from "../api/auth";
 import MonthlyChart from "../components/MontlyCharts";
+import Footer from "../components/Footer";
 
 const Dashboard = () => {
   const [type, setType] = useState<"expense" | "income">("expense");
@@ -284,7 +285,7 @@ const Dashboard = () => {
               style={{ display: "none" }}
               onChange={handlePdfUpload}
             />
-            <span>📥</span>
+            <span></span>
             <span>Импорт PDF-выписки</span>
           </label>
 
@@ -346,14 +347,14 @@ const Dashboard = () => {
             className="add-category-button show-chart-button"
           >
             <span>🔥</span>
-            <span>Активность по датам</span>
+            <span> Активность по датам</span>
           </button>
           <button
             onClick={handleExportPdf}
             className="add-category-button show-chart-button"
           >
             <span>📄</span>
-            <span>Экспорт в PDF</span>
+            <span> Экспорт в PDF</span>
           </button>
         </aside>
 
@@ -575,7 +576,7 @@ const Dashboard = () => {
           </p>
         </aside>
       </div>
-
+      <Footer />
       <ChartModal isOpen={isChartOpen} onClose={() => setChartOpen(false)}>
         <MonthlyChart transactions={transactions} />
       </ChartModal>

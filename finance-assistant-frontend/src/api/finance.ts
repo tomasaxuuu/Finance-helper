@@ -42,7 +42,12 @@ export const deleteCategory = (id: number | string) => {
   return api.delete(`/categories/${id}`);
 };
 export const exportTransactionsPdf = () => {
+  const token = localStorage.getItem("token");
+
   return api.get(`/transactions/export/pdf?ts=${Date.now()}`, {
     responseType: "blob",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 };

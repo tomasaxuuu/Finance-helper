@@ -14,10 +14,6 @@ const Header = ({ userEmail }: HeaderProps) => {
     window.location.reload();
   };
 
-  const handleProfileClick = () => {
-    navigate("/profile");
-  };
-
   const handleAdvisorClick = () => {
     navigate("/pages/Advisor");
   };
@@ -26,7 +22,11 @@ const Header = ({ userEmail }: HeaderProps) => {
   };
   return (
     <header className="site-header">
-      <div className="logo" style={{cursor: "pointer"}} onClick={handleGoHome}>
+      <div
+        className="logo"
+        style={{ cursor: "pointer" }}
+        onClick={handleGoHome}
+      >
         <span className="logo-text">Финансовый</span>
         <span className="logo-highlight">Помощник</span>
       </div>
@@ -40,18 +40,14 @@ const Header = ({ userEmail }: HeaderProps) => {
             className="profile-actions"
             style={{ display: "flex", gap: "12px", alignItems: "center" }}
           >
-            <div
-              className="profile-button"
-              onClick={handleProfileClick}
-              style={{ cursor: "pointer" }}
-            >
-              📧 {userEmail}
+            <div className="profile-button" style={{ cursor: "pointer" }}>
+              {userEmail}
             </div>
             <button
               onClick={handleAdvisorClick}
               className="add-category-button1"
             >
-              🧠 AI-Советник
+              AI-Советник
             </button>
             <button className="logout-button" onClick={handleGoHome}>
               Главная

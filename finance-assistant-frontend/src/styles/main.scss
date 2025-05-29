@@ -20,7 +20,7 @@ html {
 
 .site-header {
   background-color: #ffefef;
-  border-bottom: 2px solid #ff4d4d;
+  border-bottom: 2px solid #ff4d4d !important;
   padding: 20px 5%;
   display: flex;
   justify-content: space-between;
@@ -160,7 +160,7 @@ html {
   background-color: #ffe5e5;
   padding: 8px 16px;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 14px !important;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -665,6 +665,7 @@ form button:hover {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   gap: 20px;
   padding: 20px;
 }

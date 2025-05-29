@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "../components/AuthForm";
-import { login, register, getUser } from "../api/auth";
+import { login, register, getUser, updateProfile } from "../api/auth";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -14,7 +15,8 @@ const HomePage = () => {
     password_confirmation: "",
   });
   const [error, setError] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [editing, setEditing] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -39,11 +41,10 @@ const HomePage = () => {
         const token = response.data.access_token;
         localStorage.setItem("token", token);
 
-        // <<< Вот здесь сразу получаем пользователя!
         const userResponse = await getUser(token);
-        const email = userResponse.data.data.email;
-        localStorage.setItem("userEmail", email);
-        setUserEmail(email); // показать кнопку сразу
+        const userData = userResponse.data.data;
+        setUser(userData);
+        localStorage.setItem("userEmail", userData.email);
       } else {
         if (
           !form.name.trim() ||
@@ -71,27 +72,66 @@ const HomePage = () => {
     }
   };
 
+  const handleSave = async () => {
+    setError(null);
+    try {
+      const res = await updateProfile(form);
+      const updatedUser = res.data.data;
+
+      // если сервер требует разлогинить
+      if (res.data.force_logout) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userEmail");
+        setUser(null);
+        setEditing(false);
+        setForm({
+          email: "",
+          name: "",
+          password: "",
+          password_confirmation: "",
+        });
+        return;
+      }
+
+      // если всё хорошо — обновляем профиль и скрываем форму редактирования
+      setUser(updatedUser);
+      setEditing(false);
+      setForm({
+        ...form,
+        password: "",
+        password_confirmation: "",
+      });
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.message || "Ошибка при обновлении профиля");
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (token) {
       getUser(token)
-        .then((response) => {
-          const email = response.data.data.email;
-          localStorage.setItem("userEmail", email);
-          setUserEmail(email);
+        .then((res) => {
+          const userData = res.data.data;
+          setUser(userData);
+          setForm({
+            name: userData.name,
+            email: userData.email,
+            password: "",
+            password_confirmation: "",
+          });
         })
         .catch(() => {
           localStorage.removeItem("token");
           localStorage.removeItem("userEmail");
-          setUserEmail(null); // сбрасываем если ошибка
+          setUser(null);
         });
     }
   }, []);
 
   return (
     <div className="page-wrapper">
-      <Header userEmail={userEmail} />
+      <Header userEmail={user?.email || null} />
       <div className="home-container">
         <div className="background-animation">
           <span></span>
@@ -150,8 +190,87 @@ const HomePage = () => {
           </ul>
         </div>
 
-        {!userEmail && (
-          <div className="home-right">
+        <div className="home-right">
+          {user ? (
+            <div className="profile-card">
+              <h2 className="profile-title">Профиль</h2>
+              <div className="profile-avatar">👤</div>
+
+              {!editing ? (
+                <>
+                  <div className="profile-fields">
+                    <p>
+                      <strong>Имя:</strong> {user.name}
+                    </p>
+                    <p>
+                      <strong>Email:</strong> {user.email}
+                    </p>
+                  </div>
+                  <div className="profile-buttons">
+                    <button onClick={() => setEditing(true)}>
+                      ✏️ Редактировать
+                    </button>
+                    <button onClick={() => navigate("/dashboard")}>
+                      📊 В Dashboard
+                    </button>
+                    <button
+                      onClick={() => {
+                        localStorage.removeItem("token");
+                        localStorage.removeItem("userEmail");
+                        setUser(null);
+                        setForm({
+                          name: "",
+                          email: "",
+                          password: "",
+                          password_confirmation: "",
+                        });
+                        window.location.reload();
+                      }}
+                    >
+                      🚪 Выйти
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="profile-edit-form">
+                    <input
+                      type="text"
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      placeholder="Имя"
+                    />
+                    <input
+                      type="email"
+                      name="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      placeholder="Email"
+                    />
+                    <input
+                      type="password"
+                      name="password"
+                      value={form.password}
+                      onChange={handleChange}
+                      placeholder="Новый пароль"
+                    />
+                    <input
+                      type="password"
+                      name="password_confirmation"
+                      value={form.password_confirmation}
+                      onChange={handleChange}
+                      placeholder="Подтвердите пароль"
+                    />
+                  </div>
+                  <div className="profile-buttons">
+                    <button onClick={handleSave}>💾 Сохранить</button>
+                    <button onClick={() => setEditing(false)}>❌ Отмена</button>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
             <div className="auth-card">
               <div className="auth-header">
                 <button
@@ -178,19 +297,10 @@ const HomePage = () => {
                 error={error}
               />
             </div>
-          </div>
-        )}
-      </div>
-      <footer className="site-footer">
-        <div className="footer-content">
-          <div className="legal-info">
-            Данный проект разработан в рамках дипломной работы. Все функции
-            реализованы в учебных целях. Данные не передаются третьим лицам и
-            используются только локально.
-          </div>
-          <p>© 2025 tomasaxuuu — Финансовый помощник. Все права защищены.</p>
+          )}
         </div>
-      </footer>
+      </div>
+      <Footer />
     </div>
   );
 };

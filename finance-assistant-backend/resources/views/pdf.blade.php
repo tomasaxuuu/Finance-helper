@@ -1,56 +1,92 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>321</title>
     <style>
-        @font-face {
-            font-family: 'DejaVu Sans';
-            font-style: normal;
-            font-weight: normal;
-            src: url({{ storage_path('fonts/DejaVuSans.ttf')
-        }
-        }) format('truetype');
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            color: #000000;
+            text-align: center !important;
         }
 
-        body,
-        div,
-        p,
-        strong,
-        em,
-        span,
-        li {
-            font-family: 'DejaVu Sans', Arial, sans-serif !important;
+        h2 {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #dddddd;
+            /* Работает стабильно */
+            color: #000000;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f0f0f0;
+        }
+
+        td:nth-child(2) {
+            text-align: right;
+        }
+
+        .amount-income {
+            color: #008000;
+            /* зелёный */
+        }
+
+        .amount-expense {
+            color: #cc0000;
+            /* красный */
         }
     </style>
 </head>
 
 <body>
-    {!! htmlspecialchars_decode(html_entity_decode($content, ENT_QUOTES, 'UTF-8'), ENT_QUOTES) !!}
-    <h2>Финансовые транзакции</h2>
+
+    <h2>Finance Operations</h2>
+
     <table>
         <thead>
             <tr>
-                <th>Дата</th>
-                <th>Тип</th>
-                <th>Категория</th>
-                <th>Сумма</th>
-                <th>Заметка</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Note</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($transactions as $tx)
+            @foreach ($transactions as $transaction)
             <tr>
-                <td>{{ $tx->date }}</td>
-                <td>{{ $tx->type }}</td>
-                <td>{{ $tx->category->name ?? 'Без категории' }}</td>
-                <td>{{ $tx->amount }} ₽</td>
-                <td>{{ $tx->note }}</td>
+                <td>{{ $transaction->date ?? '-' }}</td>
+                <td class="{{ $transaction->type === 'income' ? 'amount-income' : 'amount-expense' }}">
+                    {{ $transaction->type === 'income' ? '+' : '−' }}
+                    {{ number_format($transaction->amount ?? 0, 2, ',', ' ') }}
+                </td>
+                <td>{{ $transaction->type === 'income' ? 'Income' : 'Expense' }}</td>
+                <td>{{ $transaction->category->name ?? '-' }}</td>
+                <td>{{ $transaction->note ?? '-' }}</td>
             </tr>
             @endforeach
         </tbody>
     </table>
+
 </body>
 
 </html>
